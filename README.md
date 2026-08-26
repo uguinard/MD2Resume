@@ -7,7 +7,7 @@ An Obsidian plugin to convert markdown into a nice-looking resume!
 I've spent far too many hours just trying to make my resume look right. No matter if I'm in Google Docs or Word, the formatting is always off. You know what's consistent? Markdown. That's why I built MD2Resume.
 
 ## Installation
-**Note: Currently this is not supported as a Commmunity Plugin, someday I hope to get it approved!**
+**Note: This project has been approved as a community plugin! Now you can install it directly from the community plugin page! https://community.obsidian.md/plugins/md-to-resume**
 1. Navigate to the plugins directory of your Obsidian vault
 ```bash
 cd ~/VAULT/PATH/.obsidian/plugins/

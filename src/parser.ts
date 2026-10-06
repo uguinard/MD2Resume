@@ -107,11 +107,37 @@ export function parseResume(md: string): ResumeData {
 	const sectionBlocks = body.split(/(?=^## )/m).filter(b => b.trim());
 
 	const sections: ResumeSection[] = [];
+	let profile: { heading: string; paragraphs: string[] } | undefined;
 	for (const block of sectionBlocks) {
-		if (block.match(/^## /)) {
-			sections.push(parseSection(block.trimStart()));
+		if (!block.match(/^## /)) continue;
+		const trimmed = block.trimStart();
+		const heading = (trimmed.split('\n')[0] ?? '').replace(/^##\s*/, '').trim();
+		if (heading.toLowerCase() === 'professional profile') {
+			// Collect free-form prose lines (skip bullets/dashes) as paragraphs.
+			const lines = trimmed.split('\n').slice(1);
+			const paras: string[] = [];
+			let buf: string[] = [];
+			const flush = () => {
+				const joined = buf.join(' ').trim();
+				if (joined) paras.push(joined);
+				buf = [];
+			};
+			for (const raw of lines) {
+				const line = raw.trim();
+				if (line === '') { flush(); continue; }
+				if (line.startsWith('- ') || line.startsWith('* ')) {
+					flush();
+					paras.push(line.slice(2).trim());
+					continue;
+				}
+				buf.push(line);
+			}
+			flush();
+			profile = { heading, paragraphs: paras };
+			continue;
 		}
+		sections.push(parseSection(trimmed));
 	}
 
-	return { contact, sections };
+	return { contact, sections, profile };
 }

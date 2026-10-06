@@ -136,7 +136,7 @@ export class ResumePreviewView extends ItemView {
 		const allBlocks: BlockInfo[] = [];
 
 		for (const topChild of Array.from(resumeRoot.children) as HTMLElement[]) {
-			if (!topChild.classList.contains('resume-section')) {
+			if (!topChild.classList.contains('cv-section')) {
 				const h0 = measureAcc.offsetHeight;
 				measureAcc.appendChild(topChild.cloneNode(true));
 				allBlocks.push({
@@ -149,9 +149,8 @@ export class ResumePreviewView extends ItemView {
 			const sectionEl = topChild;
 			const sectionId = sectionEl.getAttribute('data-id') ?? '';
 			const h2El = sectionEl.querySelector('h2') as HTMLElement | null;
-			const hrEl = sectionEl.querySelector('hr') as HTMLElement | null;
 			const entryEls = Array.from(
-				sectionEl.querySelectorAll<HTMLElement>(':scope > .entry, :scope > .tag-list')
+				sectionEl.querySelectorAll<HTMLElement>(':scope > .cv-entry, :scope > .cv-tag-list')
 			);
 
 			if (entryEls.length === 0) {
@@ -170,9 +169,8 @@ export class ResumePreviewView extends ItemView {
 			// Build the section in measureAcc and add entries one by one so we
 			// can measure each entry's true contribution (including its margin).
 			const accSec = createEl('section');
-			accSec.className = 'resume-section';
+			accSec.className = 'cv-section';
 			if (h2El) accSec.appendChild(h2El.cloneNode(true));
-			if (hrEl) accSec.appendChild(hrEl.cloneNode(true));
 			accSec.appendChild(firstEntry.cloneNode(true));
 
 			const h0 = measureAcc.offsetHeight;
@@ -180,10 +178,9 @@ export class ResumePreviewView extends ItemView {
 			allBlocks.push({
 				height: measureAcc.offsetHeight - h0,
 				render: (pageEl) => {
-					const sec = pageEl.createEl('section', { cls: 'resume-section' });
+					const sec = pageEl.createEl('section', { cls: 'cv-section' });
 					sec.setAttribute('data-id', sectionId);
 					if (h2El) sec.appendChild(h2El.cloneNode(true));
-					if (hrEl) sec.appendChild(hrEl.cloneNode(true));
 					sec.appendChild(firstEntry.cloneNode(true));
 				},
 			});
@@ -196,12 +193,12 @@ export class ResumePreviewView extends ItemView {
 				allBlocks.push({
 					height: measureAcc.offsetHeight - h1,
 					render: (pageEl) => {
-						const existing = Array.from(pageEl.querySelectorAll<HTMLElement>('section.resume-section'))
+						const existing = Array.from(pageEl.querySelectorAll<HTMLElement>('section.cv-section'))
 							.find(s => s.getAttribute('data-id') === sectionId);
 						if (existing) {
 							existing.appendChild(entry.cloneNode(true));
 						} else {
-							const sec = pageEl.createEl('section', { cls: 'resume-section' });
+							const sec = pageEl.createEl('section', { cls: 'cv-section' });
 							sec.setAttribute('data-id', sectionId);
 							sec.appendChild(entry.cloneNode(true));
 						}
@@ -274,20 +271,35 @@ export class ResumePreviewView extends ItemView {
 		const resumeHtml = renderResume(data, this.plugin.settings);
 		const { paperSize } = this.plugin.settings;
 
-		// Run the exact same pagination as the preview into a detached staging
-		// frame, then serialize the page divs. The frame does not need to be in
-		// the document — buildPagedPreview's internal staging div handles layout
-		// measurement; the frame only receives the final output.
-		const stagingFrame = createDiv();
-		await this.buildPagedPreview(stagingFrame, resumeHtml);
-		const pagesHtml = Array.from(stagingFrame.children)
-			.map(p => p.outerHTML)
-			.join('\n');
+		// Reuse the preview frame's already-paginated page divs whenever the
+		// preview is in sync with the active file. Re-paginating via
+		// buildPagedPreview here used to silently produce blank pages when the
+		// staging area was modified between the preview render and this call.
+		const previewFrame = this.contentEl.querySelector<HTMLElement>('.md2resume-frame');
+		const previewPages = previewFrame
+			? Array.from(previewFrame.querySelectorAll<HTMLElement>('.resume-page'))
+			: [];
+
+		let pagesHtml: string;
+		if (previewPages.length > 0) {
+			pagesHtml = previewPages.map(p => p.outerHTML).join('\n');
+		} else {
+			// Fallback: preview was never rendered for this file (e.g. the view
+			// was opened on a non-markdown file). Paginate into a detached frame.
+			console.warn('MD2Resume export: preview not yet populated — paginating now');
+			const stagingFrame = createDiv();
+			await this.buildPagedPreview(stagingFrame, resumeHtml);
+			pagesHtml = Array.from(stagingFrame.children)
+				.map(p => p.outerHTML)
+				.join('\n');
+		}
 
 		if (!pagesHtml.trim()) {
 			console.error('MD2Resume export: pagination produced no pages — aborting');
 			return;
 		}
+
+		console.log(`MD2Resume export: ${(previewPages.length || 0)} page(s) → PDF (${pagesHtml.length} chars)`);
 
 		const css = this.collectResumeCss();
 		const pdfPageSize = paperSize === 'a4' ? 'A4' : 'Letter';
@@ -306,9 +318,9 @@ export class ResumePreviewView extends ItemView {
 html, body { margin: 0; padding: 0; background: white; }
 h1, h2, h3, h4, h5, h6, p, ul, ol, li { margin: 0; padding: 0; }
 ${css}
-.resume-page { box-shadow: none; break-after: page; }
-.resume-page:last-child { break-after: auto; }
-@page { margin: 0; }
+.resume-page { box-shadow: none; break-after: page; page-break-after: always; }
+.resume-page:last-child { break-after: auto; page-break-after: auto; }
+@page { size: ${pdfPageSize}; margin: 0; }
 </style>
 </head>
 <body>
@@ -316,18 +328,16 @@ ${pagesHtml}
 </body>
 </html>`;
 
+		// Auto-save path: open the export doc in a hidden BrowserWindow, render
+		// to PDF via printToPDF, save to disk through the system save dialog.
 		try {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports -- Node.js/Electron APIs are only available via CommonJS require() in Obsidian plugins
 			const fs   = require('fs')   as { writeFileSync: (p: string, d: string | Uint8Array) => void; unlinkSync: (p: string) => void };
-			// eslint-disable-next-line @typescript-eslint/no-require-imports -- Node.js/Electron APIs are only available via CommonJS require() in Obsidian plugins
 			const path = require('path') as { join: (...a: string[]) => string };
-			// eslint-disable-next-line @typescript-eslint/no-require-imports -- Node.js/Electron APIs are only available via CommonJS require() in Obsidian plugins
 			const os   = require('os')   as { tmpdir: () => string };
-			// eslint-disable-next-line @typescript-eslint/no-require-imports -- Node.js/Electron APIs are only available via CommonJS require() in Obsidian plugins
 			const { remote } = require('electron') as {
 				remote: {
 					BrowserWindow: new (opts: object) => {
-						loadURL: (url: string) => void;
+						loadURL: (url: string) => Promise<void>;
 						close: () => void;
 						webContents: {
 							on: (event: string, cb: () => void) => void;
@@ -340,10 +350,15 @@ ${pagesHtml}
 				};
 			};
 
-			const tmpPath = path.join(os.tmpdir(), `md2resume-${Date.now()}.html`);
-			fs.writeFileSync(tmpPath, doc);
+			// Write the export HTML as a data: URL so Electron doesn't have to
+			// resolve a filesystem path. data: URLs work in every Chromium build
+			// and bypass any symlink / file:// path-resolution issues.
+			const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(doc);
 
-			const printWin = new remote.BrowserWindow({ show: false });
+			const printWin = new remote.BrowserWindow({
+				show: false,
+				webPreferences: { nodeIntegration: false, contextIsolation: true },
+			});
 
 			try {
 				const pdfData = await new Promise<Uint8Array>((resolve, reject) => {
@@ -354,9 +369,9 @@ ${pagesHtml}
 								pageSize: pdfPageSize,
 								margins: { marginType: 'none' },
 							}).then(resolve, reject);
-						}, 300);
+						}, 800);
 					});
-					printWin.loadURL(`file://${tmpPath}`);
+					void printWin.loadURL(dataUrl);
 				});
 
 				const result = await remote.dialog.showSaveDialog({
@@ -370,7 +385,6 @@ ${pagesHtml}
 				}
 			} finally {
 				try { printWin.close(); } catch { /* ignore */ }
-				try { fs.unlinkSync(tmpPath); } catch { /* ignore */ }
 			}
 		} catch (err) {
 			console.error('MD2Resume: failed to export PDF', err);
@@ -383,7 +397,14 @@ ${pagesHtml}
 			try {
 				for (const rule of Array.from(sheet.cssRules)) {
 					const text = rule.cssText;
-					if (/resume-|\.entry|dot-leader|tag-list|section-rule|section-heading|contact-link/.test(text)) {
+					// Always keep CSS custom-property declarations so `var(--spine)` etc.
+					// resolve correctly in the PDF (Electron BrowserWindow has no :root from
+					// Obsidian's theme).
+					if (text.startsWith(':root') || text.startsWith('@media print')) {
+						chunks.push(text);
+						continue;
+					}
+					if (/resume-|\.cv-entry|\.cv-section|\.cv-tag-list|\.cv-profile|\.cv-languages|\.cv-references-note|contact-link/.test(text)) {
 						chunks.push(text);
 					}
 				}

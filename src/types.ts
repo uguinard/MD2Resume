@@ -22,9 +22,15 @@ export interface ResumeSection {
 	tags: string[];
 }
 
+export interface ResumeProfile {
+	heading: string;
+	paragraphs: string[];
+}
+
 export interface ResumeData {
 	contact: ContactInfo;
 	sections: ResumeSection[];
+	profile?: ResumeProfile;
 }
 
 export interface MD2ResumeSettings {

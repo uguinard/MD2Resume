@@ -40,9 +40,9 @@ export default class MD2ResumePlugin extends Plugin {
 			return;
 		}
 
-		// Open in right split
-		let leaf: WorkspaceLeaf | null = workspace.getRightLeaf(false);
-		if (!leaf) leaf = workspace.getLeaf(true);
+		// Open as a normal tab in the central editor area (replaces the active
+		// markdown leaf so the source stays visible on the left/right split if any).
+		const leaf = workspace.getLeaf('tab');
 		await leaf.setViewState({ type: VIEW_TYPE_RESUME, active: true });
 		await workspace.revealLeaf(leaf);
 	}

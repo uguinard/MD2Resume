@@ -1,4 +1,4 @@
-import { ContactInfo, MD2ResumeSettings, ResumeData, ResumeEntry, ResumeSection } from './types';
+import { ContactInfo, MD2ResumeSettings, ResumeData, ResumeEntry, ResumeProfile, ResumeSection } from './types';
 
 function escHtml(s: string): string {
 	return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -7,10 +7,21 @@ function escHtml(s: string): string {
 function buildContactLine(contact: ContactInfo): string {
 	const parts: string[] = [];
 
+	if (contact['phone']) {
+		const p = contact['phone'];
+		const tel = p.replace(/[^+\d]/g, '');
+		parts.push(`<a href="tel:${tel}" class="contact-link">${escHtml(p)}</a>`);
+	}
+
 	if (contact['contact_phone']) {
 		const p = contact['contact_phone'];
 		const tel = p.replace(/[^+\d]/g, '');
 		parts.push(`<a href="tel:${tel}" class="contact-link">${escHtml(p)}</a>`);
+	}
+
+	if (contact['location']) {
+		const l = contact['location'];
+		parts.push(`<span class="contact-link">${escHtml(l)}</span>`);
 	}
 
 	if (contact['contact_email']) {
@@ -64,45 +75,50 @@ function buildContactLine(contact: ContactInfo): string {
 		return escHtml(contact['contact']);
 	}
 
-	return parts.join(' | ');
+	return parts.join(' &nbsp;&middot;&nbsp; ');
+}
+
+function buildLanguagesLine(contact: ContactInfo): string {
+	const raw = contact['languages'];
+	if (!raw) return '';
+	// Accept either a comma/semicolon-separated string or a YAML list (parser flattens to first value)
+	const items = raw.split(/[,;]/).map(s => s.trim()).filter(Boolean);
+	if (items.length === 0) return '';
+	const inner = items.map(s => `<span class="cv-lang-item">${escHtml(s)}</span>`).join('');
+	return `<div class="cv-languages">${inner}</div>`;
 }
 
 function renderEntry(entry: ResumeEntry): string {
 	const parts: string[] = [];
 
+	// Head + meta line — design-style: flat entry-head, italic entry-meta
 	if (entry.title) {
 		if (entry.type === 'job' && entry.date) {
-			parts.push(`<div class="entry-header">
-				<span class="entry-title">${escHtml(entry.title)}</span>
-				<span class="dot-leader"></span>
-				<span class="entry-date">${escHtml(entry.date)}</span>
-			</div>`);
+			parts.push(`<div class="cv-entry-head">${escHtml(entry.title)}</div>`);
+			parts.push(`<div class="cv-entry-meta">${escHtml(entry.date)}</div>`);
 		} else if (entry.type === 'project') {
 			const colonIdx = entry.title.indexOf(':');
 			if (colonIdx !== -1) {
 				const projectTitle = escHtml(entry.title.slice(0, colonIdx));
 				const projectSub = escHtml(entry.title.slice(colonIdx));
-				parts.push(`<div class="entry-header">
-				<span class="entry-title">${projectTitle}</span><span class="entry-subtitle-inline">${projectSub}</span>
-			</div>`);
+				parts.push(`<div class="cv-entry-head">${projectTitle}</div>`);
+				parts.push(`<div class="cv-entry-meta">${projectSub}</div>`);
 			} else {
-				parts.push(`<div class="entry-header">
-				<span class="entry-title">${escHtml(entry.title)}</span>
-			</div>`);
+				parts.push(`<div class="cv-entry-head">${escHtml(entry.title)}</div>`);
 			}
 		}
 	}
 
 	if (entry.subtitle) {
-		parts.push(`<p class="entry-subtitle"><em>${escHtml(entry.subtitle)}</em></p>`);
+		parts.push(`<div class="cv-entry-meta">${escHtml(entry.subtitle)}</div>`);
 	}
 
 	if (entry.bullets.length > 0) {
 		const lis = entry.bullets.map(b => `<li>${escHtml(b)}</li>`).join('\n');
-		parts.push(`<ul class="entry-bullets">\n${lis}\n</ul>`);
+		parts.push(`<ul class="cv-entry-body">\n${lis}\n</ul>`);
 	}
 
-	return `<div class="entry">${parts.join('\n')}</div>`;
+	return `<div class="cv-entry">${parts.join('\n')}</div>`;
 }
 
 function renderSection(section: ResumeSection): string {
@@ -116,14 +132,22 @@ function renderSection(section: ResumeSection): string {
 
 	if (section.tags.length > 0) {
 		const items = section.tags.map(t => `<span>${escHtml(t)}</span>`).join('\n');
-		parts.push(`<div class="tag-list">\n${items}\n</div>`);
+		parts.push(`<div class="cv-tag-list">\n${items}\n</div>`);
 	}
 
-	return `<section class="resume-section" data-id="${escHtml(section.id)}">
-		<h2 class="section-heading">${escHtml(section.heading)}</h2>
-		<hr class="section-rule">
+	return `<section class="cv-section" data-id="${escHtml(section.id)}">
+		<h2 class="cv-section-head">${escHtml(section.heading)}</h2>
 		${parts.join('\n')}
 	</section>`;
+}
+
+function renderProfile(profile: ResumeProfile | undefined): string {
+	if (!profile) return '';
+	const heading = `<h2 class="cv-section-head">${escHtml(profile.heading)}</h2>`;
+	const paras = profile.paragraphs
+		.map(p => `<p>${escHtml(p)}</p>`)
+		.join('\n');
+	return `<section class="cv-section cv-profile-section" data-id="cv-profile">${heading}\n${paras}\n</section>`;
 }
 
 export function renderResume(data: ResumeData, settings: MD2ResumeSettings): string {
@@ -140,14 +164,23 @@ export function renderResume(data: ResumeData, settings: MD2ResumeSettings): str
 		: '';
 
 	const contactLine = buildContactLine(data.contact);
+	const languagesLine = buildLanguagesLine(data.contact);
 
 	const header = `<div class="resume-header">
 		<h1 class="resume-name">${escHtml(data.contact['name'] ?? '')}</h1>
 		<p class="resume-contact">${contactLine}</p>
+		${languagesLine}
 		${headerLabelHtml}
 	</div>`;
 
+	const profile = renderProfile(data.profile);
+
+	const referencesNote = data.contact['references_note'];
+	const referencesNoteHtml = referencesNote
+		? `<p class="cv-references-note"><em>${escHtml(referencesNote)}</em></p>`
+		: '';
+
 	const sections = data.sections.map(renderSection).join('\n');
 
-	return `<div class="resume-root" style="${cssVars}">${header}\n${sections}\n</div>`;
+	return `<div class="resume-root" style="${cssVars}">${header}\n${profile}\n${sections}\n${referencesNoteHtml}\n</div>`;
 }

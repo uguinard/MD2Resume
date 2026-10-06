@@ -39,25 +39,28 @@ mv ~/VAULT/PATH/.obsidian/plugins/MD2Resume/MD2Resume-Template.md ~/VAULT/PATH/R
 
 ## Detailed Usage
 ### Properties
-The properties are values that show up at the top of the resume. This includes name, contact information, and a quick bio. These automatically generate hyperlinks in the PDF.
+The properties are values that show up at the top of the resume. This includes name, contact information, and a quick bio. Most of these automatically generate hyperlinks in the PDF.
 Currently supported properties include:
-* `name` - Your Name
-* `contact_email` - Your Email
-* `contact_phone` - Your Phone Number
-* `contact_website` - Your Website
-* `contact_linkedin` - Your LinkedIn
-* `contact_github` - Your GitHub
-* `header` - Your bio
+* `name` - Your Name (required)
+* `phone` - Phone number with country code, rendered as a `tel:` link
+* `location` - City / region, plain text
+* `languages` - Comma-separated list (e.g. `Spanish (C2), English (C1), French (B2)`); rendered as a small-caps line under the contact row
+* `contact_email` - Your email
+* `contact_website` - Your website (bare host or full URL)
+* `contact_linkedin` - Your LinkedIn (username, handle, or full URL)
+* `contact_github` - Your GitHub (username, handle, or full URL)
+* `header` - One-line tagline shown under the contact row
+* `references_note` - Optional italic disclaimer line printed at the very end of the resume (e.g. `Additional references available upon request.`)
 
 ### Body
 **Sections:** `## Section Name`  
-Any name; freely defined.  
+Any name; freely defined. The special section `## Professional Profile` is rendered as a justified prose block (no section heading).
 
 **Job entries:** `### Title | Date Range`  
-The `|` separator triggers job formatting with a dot-leader between title and date. An optional italicized subtitle on the next line (`*Company, Location*`) is supported.
+The `|` separator splits the title from the date, each on its own line. An optional italic subtitle on the next line (`*Company, Location*`) is supported.
 
 **Project entries:** `### Title: Subtitle`  
-The `:` separator splits the title for inline subtitle styling. Without a `:` or `|`, it renders as a plain titled entry.
+The `:` separator splits the title and subtitle onto their own lines.
 
 **Bullets:** `-` or `*` bullets  
 Works at section level (bare bullets) and inside entries.

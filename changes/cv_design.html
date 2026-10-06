@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Curriculum Vitae — Sergio Uribe Guinard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #F7F4EE; --ink: #1C1A17; --ink-light: #5C5750;
+    --spine: #8B2020; --spine-thin: #C4895A; --gold: #B8913A;
+    --spine-w: 3px; --page-w: 210mm; --page-h: 297mm;
+  }
+  html, body { width: var(--page-w); background: var(--cream); font-family: Georgia, serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .page { width: var(--page-w); height: var(--page-h); background: var(--cream); display: grid; grid-template-columns: 18mm 1fr; position: relative; overflow: hidden; }
+  .spine { position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 14mm; padding-bottom: 10mm; }
+  .spine::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, transparent 8mm, var(--spine) 14mm, var(--spine) calc(100% - 14mm), transparent 100%); }
+  .spine-text { writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); font-size: 6.5pt; letter-spacing: 0.18em; color: var(--spine); font-weight: 500; white-space: nowrap; margin-top: auto; margin-bottom: auto; }
+  .spine-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--spine); position: absolute; right: -1px; }
+  .spine-dot.top { top: 14mm; } .spine-dot.bottom { bottom: 14mm; }
+  .content { padding: 10mm 13mm 8mm 9mm; display: flex; flex-direction: column; height: 100%; }
+  .header { margin-bottom: 4mm; padding-bottom: 3.5mm; border-bottom: 0.5px solid var(--ink-light); position: relative; }
+  .header::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 22mm; height: 1.5px; background: var(--spine); }
+  .name { font-size: 14.5pt; font-weight: 500; letter-spacing: 0.06em; color: var(--ink); line-height: 1; margin-bottom: 1.8mm; font-variant: small-caps; }
+  .role-line { font-size: 7.8pt; font-style: italic; color: var(--ink-light); letter-spacing: 0.02em; margin-bottom: 1mm; }
+  .contact-line { font-size: 6.6pt; color: var(--ink-light); letter-spacing: 0.08em; font-variant: small-caps; }
+  .doc-tag { display: inline-block; font-size: 5.6pt; letter-spacing: 0.2em; color: var(--cream); background: var(--spine); padding: 1.5px 5px; margin-bottom: 2.5mm; text-transform: uppercase; }
+  p { font-size: 9pt; line-height: 1.48; color: var(--ink); text-align: justify; hyphens: auto; margin-bottom: 1.5mm; }
+  .cv-section-head { font-size: 7pt; font-weight: 500; letter-spacing: 0.18em; color: var(--spine); text-transform: uppercase; margin-top: 3.5mm; margin-bottom: 1.2mm; border-bottom: 0.5px solid var(--spine); padding-bottom: 0.8mm; }
+  .cv-entry { margin-bottom: 2.5mm; }
+  .cv-entry-head { font-size: 9.2pt; font-weight: 500; color: var(--ink); }
+  .cv-entry-meta { font-size: 7.5pt; font-style: italic; color: var(--ink-light); margin-bottom: 0.6mm; }
+  .cv-entry-body { font-size: 8.6pt; line-height: 1.42; color: var(--ink); }
+  .cv-entry-body li { margin-bottom: 0.6mm; margin-left: 3mm; list-style: none; padding-left: 4mm; position: relative; }
+  .cv-entry-body li::before { content: "–"; position: absolute; left: 0; color: var(--spine); }
+  .cv-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .lang-table { width: 100%; border-collapse: collapse; font-size: 8.2pt; margin-top: 1mm; }
+  .lang-table td { padding: 1.2mm 2mm; border: 0.5px solid rgba(92,87,80,0.2); }
+  .lang-table td:first-child { font-weight: 500; color: var(--ink); width: 22%; }
+  .lang-table td:last-child { color: var(--ink-light); font-style: italic; }
+  .footer { margin-top: 3mm; padding-top: 2.5mm; border-top: 0.5px solid rgba(92,87,80,0.3); display: flex; justify-content: space-between; align-items: baseline; }
+  .footer-name { font-size: 7pt; letter-spacing: 0.06em; color: var(--ink); font-weight: 500; }
+  .footer-contact { font-size: 6.5pt; font-style: italic; color: var(--ink-light); letter-spacing: 0.02em; }
+  @media print { html, body { width: 210mm; } .page { page-break-after: always; } @page { size: A4; margin: 0; } }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <div class="spine">
+    <div class="spine-dot top"></div>
+    <span class="spine-text">Curriculum Vitae &nbsp;&middot;&nbsp; Sergio Uribe Guinard</span>
+    <div class="spine-dot bottom"></div>
+  </div>
+
+  <div class="content">
+    <div class="header">
+      <div class="name">Sergio Uribe Guinard</div>
+      <div class="role-line">Holistic Spanish Language Educator with English and French &nbsp;&middot;&nbsp; IB-Certified</div>
+      <div class="contact-line">uguinard@gmail.com &nbsp;&middot;&nbsp; (+34) 666 209033 &nbsp;&middot;&nbsp; sergi.com</div>
+    </div>
+
+    <div style="line-height:1;"><span class="doc-tag">Curriculum Vitae</span></div>
+
+    <div class="cv-section-head">Professional Profile</div>
+    <p>Holistic Language Educator with a Master's in ELE and a deep commitment to fostering human connection and natural language acquisition. My practice connects hearts and minds by grounding language in experiential learning, contextual induction, and 4E Cognition—moving away from rote textbooks toward living, physical interaction. While my background spans structured international schools to remote Indigenous communities in the Amazonian watershed, my core strengths are my radical adaptability and constant curiosity. I am deeply open to the principles of self-directed exploration and agency. I value the natural ability to wonder, to learn alongside my students with a “beginner's mind,” and above all, to build and belong to a resilient, restorative community.</p>
+
+    <div class="cv-section-head">Professional Experience</div>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">Spanish MFL Teacher &nbsp;&middot;&nbsp; IB MYP Language Acquisition &nbsp;&middot;&nbsp; UWC Thailand</div>
+      <div class="cv-entry-meta">Phuket, Thailand &nbsp;&middot;&nbsp; August &ndash; October 2025</div>
+      <ul class="cv-entry-body">
+        <li>Delivered IB MYP Language Acquisition, moving away from rote memorization toward transdisciplinary, project-based experiences for mixed-ability cohorts.</li>
+        <li>Served as Grade 6 Co-Advisor (Homeroom), prioritizing somatic emotional support, restorative community circles, and deep interpersonal connection to support students during their transitional middle-years.</li>
+        <li>Facilitated interdisciplinary modules including Experiential Learning and outdoor education, anchoring vocabulary in physical movement and environmental interaction.</li>
+      </ul>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">Spanish MFL Teacher &nbsp;&middot;&nbsp; Tarsus American College</div>
+      <div class="cv-entry-meta">Tarsus, Turkey &nbsp;&middot;&nbsp; November 2021 &ndash; July 2023</div>
+      <ul class="cv-entry-body">
+        <li>Scaffolded the transition of prep and 9 grade students from an encyclopedic learning system toward inquiry-based, student-centered environments aligned with TAC's educational philosophy.</li>
+        <li>Fostered engagement and intrinsic motivation by weaving interactive storytelling and dynamic resources into the curriculum (developed 30+ interactive H5P resources).</li>
+        <li>Led the region’s first DELE examination centre accreditation while maintaining a focus on organic, communicative language use and academic rigor.</li>
+      </ul>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">Secondary English Teacher &nbsp;&middot;&nbsp; Colegio Alvernia Bilingüe</div>
+      <div class="cv-entry-meta">Bogot&aacute;, Colombia &nbsp;&middot;&nbsp; January 2020 &ndash; July 2021</div>
+      <ul class="cv-entry-body">
+        <li>Taught English to 150+ secondary students, focusing on reading comprehension, academic writing, and oral communication skills.</li>
+        <li>Implemented EAL scaffolding techniques to support multilingual learners in developing strong foundational literacy and effective study habits.</li>
+        <li>Led cross-curricular projects integrating English language and informational texts with ecological awareness and environmental stewardship.</li>
+      </ul>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">English &amp; Spanish Teacher &nbsp;&middot;&nbsp; Vicariato Apostólico de Inírida</div>
+      <div class="cv-entry-meta">Guain&iacute;a, Colombia &nbsp;&middot;&nbsp; April &ndash; September 2019</div>
+      <ul class="cv-entry-body">
+        <li>Designed and delivered English and Spanish language instruction in a remote, multicultural Amazonian setting.</li>
+        <li>Adapted teaching strategies for diverse learning profiles and multilingual Indigenous students, fostering an inclusive environment that honored students' lived realities while building essential language skills.</li>
+        <li>Honed the ability to decenter traditional teaching authority in favor of observation, centering local environmental knowledge to make language learning highly contextual and engaging.</li>
+      </ul>
+    </div>
+    
+    <div class="cv-entry">
+      <div class="cv-entry-head">Independent Online English &amp; Spanish Educator</div>
+      <div class="cv-entry-meta">Online &nbsp;&middot;&nbsp; November 2025 &ndash; Present</div>
+      <ul class="cv-entry-body">
+        <li>Facilitating customized online English and Spanish language sessions for international learners, focusing on natural language acquisition and experiential exploration.</li>
+        <li>Integrating self-directed exploration and contextual induction into digital spaces to build student agency, reading fluency, and intrinsic motivation.</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      <span class="footer-name">Sergio Uribe Guinard</span>
+      <span class="footer-contact">Page 1 of 2 &nbsp;&middot;&nbsp; uguinard@gmail.com &nbsp;&middot;&nbsp; sergiouribe.co</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" style="page-break-before:always;">
+  <div class="spine">
+    <div class="spine-dot top"></div>
+    <span class="spine-text">Curriculum Vitae &nbsp;&middot;&nbsp; Sergio Uribe Guinard</span>
+    <div class="spine-dot bottom"></div>
+  </div>
+
+  <div class="content">
+    <div class="header">
+      <div class="name">Sergio Uribe Guinard</div>
+      <div class="role-line">Holistic English &amp; Spanish Language Educator &nbsp;&middot;&nbsp; IB-Certified</div>
+      <div class="contact-line">uguinard@gmail.com &nbsp;&middot;&nbsp; (+34) 666 209033 &nbsp;&middot;&nbsp; sergiouribe.co</div>
+    </div>
+
+    <div style="line-height:1;"><span class="doc-tag">Curriculum Vitae</span></div>
+
+    <div class="cv-section-head">Education</div>
+    <div class="cv-two-col">
+      <div>
+        <div class="cv-entry">
+          <div class="cv-entry-head">IB Certificate in Teaching and Learning</div>
+          <div class="cv-entry-meta">Universidad Camilo Jos&eacute; Cela &middot; Spain &middot; 2025</div>
+          <div class="cv-entry-body" style="font-size:8.2pt;">Focus: IB methodologies, CAS, TOK, Approaches to Teaching and Learning (ATL).</div>
+        </div>
+        <div class="cv-entry">
+          <div class="cv-entry-head">Specialisation Diploma in International Education</div>
+          <div class="cv-entry-meta">Universidad Camilo Jos&eacute; Cela &middot; Spain &middot; 2025</div>
+          <div class="cv-entry-body" style="font-size:8.2pt;">Focus: International curriculum development and global citizenship frameworks.</div>
+        </div>
+      </div>
+      <div>
+        <div class="cv-entry">
+          <div class="cv-entry-head">Master&rsquo;s in Teaching Spanish as a Foreign Language (ELE)</div>
+          <div class="cv-entry-meta">Universidad de Sevilla &middot; Spain &middot; 2024 &middot; GPA 3.8/4.0</div>
+          <div class="cv-entry-body" style="font-size:8.2pt;">Thesis: <em>The Hero&rsquo;s Journey: A Didactic Proposal from Conceptual Metaphor Theory and 4E Cognition.</em> (Highly applicable to narrative comprehension and literary analysis in English).</div>
+        </div>
+        <div class="cv-entry">
+          <div class="cv-entry-head">Bachelor of Education in Spanish and Foreign Languages</div>
+          <div class="cv-entry-meta">Universidad Pedag&oacute;gica Nacional &middot; Colombia &middot; 2018</div>
+          <div class="cv-entry-body" style="font-size:8.2pt;">Equivalency: Equivalent to PGCE with QTS for non-UK trained educators.<br>Focus: Core studies, literature courses, and teaching practicums heavily focused on English language instruction and French.<br>Research: Multisensory Modality for Oral Production in Foreign Language Education.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cv-section-head">Languages</div>
+    <table class="lang-table">
+      <tr><td>Spanish</td><td>Native (C2) &mdash; Full academic and professional fluency</td></tr>
+      <tr><td>English</td><td>Advanced (C1) &mdash; Full professional fluency; capable of IB/High School instruction</td></tr>
+      <tr><td>French</td><td>Upper-Intermediate (B2) &mdash; Classroom instruction capability</td></tr>
+      <tr><td>Turkish</td><td>Basic (A1) &mdash; Functional conversational level</td></tr>
+    </table>
+
+    <div class="cv-section-head">Teaching Skills &amp; Technology</div>
+    <div class="cv-two-col">
+      <ul class="cv-entry-body">
+        <li><strong>English &amp; EAL Methodology:</strong> EAL/ESL Scaffolding, Academic Literacy, Reading Comprehension, Creative &amp; Academic Writing, Comprehensible Input, CEFR A1&ndash;C1, 4E Cognition.</li>
+        <li><strong>IB &amp; Assessment:</strong> MYP Language Acquisition, DP awareness, IB criterion-referenced assessment, data-driven formative feedback, DELE Examinations (accredited centre lead).</li>
+        <li><strong>Pastoral &amp; Extracurricular:</strong> Homeroom advisor, middle-to-high school transition support, restorative communication, Reading Clubs, Creative Writing initiatives, Digital Storytelling.</li>
+      </ul>
+      <ul class="cv-entry-body">
+        <li><strong>EdTech &amp; LMS:</strong> Canvas, ManageBac, Moodle, Blackboard, Google Workspace, H5P (30+ resources produced), AI-generated pipelines, interactive multimedia.</li>
+        <li><strong>Programming:</strong> Python 3, HTML5, CSS3, JavaScript (EdTech resource development).</li>
+        <li><strong>Safeguarding:</strong> Enhanced DBS-equivalent (Turkey, Thailand); police clearances available for all countries of residence.</li>
+      </ul>
+    </div>
+
+    <div class="cv-section-head">Professional References</div>
+    <div class="cv-two-col">
+      <ul class="cv-entry-body">
+        <li><strong>David Griffiths</strong> &mdash; Head of School, UWC Thailand <em>(current Principal)</em></li>
+        <li><strong>Michael Sheridan</strong> &mdash; Secondary Principal, UWC Thailand</li>
+        <li><strong>Chantal Kruger</strong> &mdash; Vice Principal &amp; MYP Coordinator, UWC Thailand</li>
+      </ul>
+      <ul class="cv-entry-body">
+        <li><strong>Javier Mu&ntilde;oz-Basols</strong> &mdash; President ASELE / Director, Instituto Cervantes LA</li>
+        <li><strong>Lola Pons</strong> &mdash; PhD Professor, Universidad de Sevilla</li>
+        <li><strong>Ahu Tereci Dursun</strong> &mdash; Head of Foreign Languages, Tarsus American College</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      <span class="footer-name">Sergio Uribe Guinard</span>
+      <span class="footer-contact">Page 2 of 2 &nbsp;&middot;&nbsp; uguinard@gmail.com &nbsp;&middot;&nbsp; sergiouribe.co</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
